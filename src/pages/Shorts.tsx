@@ -106,7 +106,7 @@ export default function Shorts() {
                 throw new Error('Пожалуйста, введите название видео');
             }
 
-            const payload = {
+            const payload: any = {
                 title: formData.title,
                 video_url: finalVideoUrl,
                 description: formData.description,
@@ -122,9 +122,14 @@ export default function Shorts() {
                     throw error;
                 }
             } else {
+                // Generate a random ID because the table doesn't have a default id generator
+                payload.id = crypto.randomUUID();
                 const { error } = await supabase.from('shorts').insert([payload]);
                 if (error) {
                     console.error('Insert error:', error);
+                    if ((error as any).code === '23502') {
+                         throw new Error(`Ошибка базы данных: пропущено обязательное поле (${(error as any).column || 'id'}). Пожалуйста, обратитесь к разработчику.`);
+                    }
                     throw error;
                 }
             }
