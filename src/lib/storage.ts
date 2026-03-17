@@ -32,7 +32,12 @@ export const StorageService = {
                 .upload(path, file, { cacheControl: '3600', upsert: false });
 
             if (error) {
-                console.error('Supabase upload error:', error);
+                console.error('Supabase storage upload error details:', {
+                    message: error.message,
+                    name: error.name,
+                    cause: error.cause,
+                    stack: (error as any).stack
+                });
                 return { error: error.message, url: '' };
             }
 
